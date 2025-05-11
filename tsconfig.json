@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "ES2022",
+    "esModuleInterop": true,
+    "target": "es2023",
+    "moduleResolution": "node",
+    "strict": true,
+    "rootDir": "./",
+    "sourceMap": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist"
+  },
+  "lib": ["es2023"]
+}

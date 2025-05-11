@@ -1,0 +1,14 @@
+.vscode/
+node_modules/
+dist/
+.env*
+secrets/
+
+*.sqlite
+*.p8
+*.p12
+*.key
+*.pem
+
+# macOS
+.DS_Store
