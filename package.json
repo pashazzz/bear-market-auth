@@ -11,7 +11,9 @@
     "start": "npx tsx src/app.ts",
     "dev": "nodemon src/app.ts",
     "build": "tsc",
-    "db:generate": "npx tsx ./scripts/generate.ts",
+    "db:generate": "npx tsx ./scripts/generateDb.ts",
+    "gen:keypair": "npx tsx ./scripts/generateKeyPair.ts",
+    "gen:certs": "./scripts/generateCerts.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
