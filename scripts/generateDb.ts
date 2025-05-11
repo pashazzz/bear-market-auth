@@ -13,23 +13,23 @@ const dbPath = path.join(__dirname, '..', 'db', 'db.sqlite')
 const db = new DatabaseSync(dbPath)
 
 const prepareQuery = (user: IUser) => {
-  const { id, username, email, passHash, roles, createdAt, updatedAt } = user
-  return `INSERT INTO users (id, username, email, pass_hash, roles, created_at, updated_at) VALUES ('${id}', '${username}', '${email}', '${passHash}', '${roles}', '${createdAt}', '${updatedAt}');`
+  const { id, displayName, email, passHash, roles, createdAt, updatedAt } = user
+  return `INSERT INTO users (id, displayName, email, passHash, roles, createdAt, updatedAt) VALUES ('${id}', '${displayName}', '${email}', '${passHash}', '${roles}', '${createdAt}', '${updatedAt}');`
 }
 
-// create table
-db.exec(`CREATE TABLE IF NOT EXISTS users (
-  id TEXT PRIMARY KEY NOT NULL,
-  username TEXT NOT NULL,
-  email TEXT NOT NULL,
-  pass_hash TEXT NOT NULL,
-  roles TEXT NOT NULL,
-  created_at TEXT NOT NULL,
-  updated_at TEXT NOT NULL
-);`)
+// drop table
+db.exec(`DROP TABLE IF EXISTS users`)
 
-// clear table
-db.exec(`DELETE FROM users`)
+// create table
+db.exec(`CREATE TABLE users (
+  id TEXT PRIMARY KEY NOT NULL,
+  displayName TEXT,
+  email TEXT NOT NULL UNIQUE,
+  passHash TEXT NOT NULL,
+  roles TEXT NOT NULL,
+  createdAt TEXT NOT NULL,
+  updatedAt TEXT NOT NULL
+);`)
 
 // seed
 users.forEach(user => {
