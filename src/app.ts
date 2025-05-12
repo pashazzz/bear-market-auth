@@ -2,9 +2,11 @@ import { createServer } from 'node:https'
 import { readFileSync } from 'node:fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import dotenv from 'dotenv'
 
 import router from '@/router'
 
+dotenv.config()
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const server = createServer({
