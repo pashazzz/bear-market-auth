@@ -15,7 +15,8 @@ export default async function Login(req: IncomingMessage, res: ServerResponse) {
   let body: ILoginBody
   try {
     body = await getJsonBody(req) as ILoginBody
-  } catch (error) {
+  } catch (err) {
+    console.error(err)
     return sendError(res, 400, '400 Bad request')
   }
 
@@ -29,12 +30,11 @@ export default async function Login(req: IncomingMessage, res: ServerResponse) {
     return sendError(res, 401, '401 Unauthorized')
   }
 
-  const now = new Date().getTime()
-  const oneDay = 1000 * 60 * 60 * 24
+  const oneMonthLater = new Date().getTime() + 1000 * 60 * 60 * 24 * 30
   const payload: IJWTPayload = getPayload({id: user.id as string, email: user.email as string})
 
   const token = createJWT(payload, process.env.JWT_SECRET as string)
-  const refreshToken = createJWT({...payload, exp: now + oneDay * 30}, process.env.JWT_REFERESH_SECRET as string)
+  const refreshToken = createJWT({...payload, exp: oneMonthLater}, process.env.JWT_REFERESH_SECRET as string)
 
   sql(`UPDATE users SET refreshToken = '${refreshToken}' WHERE id = '${user.id}'`)
 

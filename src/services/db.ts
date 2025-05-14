@@ -2,8 +2,6 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { DatabaseSync } from 'node:sqlite'
 
-import { IUser } from '@/interfaces/IUser'
-
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const dbPath = path.join(__dirname, '..', '..', 'db', 'db.sqlite')
@@ -28,11 +26,16 @@ export const createUser = (email: string, passHash: string) => {
   const updatedAt = createdAt
 
   try {
-    return db.prepare(`INSERT INTO users (id, displayName, email, passHash, roles, createdAt, updatedAt) VALUES ('${id}', '${email}', '${passHash}', '${createdAt}', '${updatedAt}'`).run()
+    db.prepare(`INSERT
+      INTO users (id, email, passHash, createdAt, updatedAt)
+      VALUES ('${id}', '${email}', '${passHash}', '${createdAt}', '${updatedAt}')`).run()
   } catch (error) {
-    console.error(error)
-    new Error('Failed to create user', { cause: error })
+    if ((error as Error).message === 'UNIQUE constraint failed: users.email') {
+      return new Error('User already exists', { cause: error })
+    }
+    return new Error('Failed to create user', { cause: error })
   }
+  return {id, email}
 }
 
 export default {

@@ -14,7 +14,8 @@ export default async function Refresh(req: IncomingMessage, res: ServerResponse)
   let body: IRefreshBody
   try {
     body = await getJsonBody(req) as IRefreshBody
-  } catch (error) {
+  } catch (err) {
+    console.error(err)
     return sendError(res, 400, '400 Bad request')
   }
 
