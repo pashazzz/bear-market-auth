@@ -1,8 +1,9 @@
 import { IncomingMessage, ServerResponse } from "node:http"
 
 import { getJsonBody } from '@/utils/reqData'
-import { createJWT, verifyJWT } from '@/utils/jwt'
-import { fetchUserById, sql } from '@/services/db'
+import { createJWT, verifyJWT, getPayload } from '@/utils/jwt'
+import { fetchUserById } from '@/services/db'
+import { sendError } from "@/services/api"
 import { IJWTPayload } from "@/interfaces/IJWTPayload"
 
 interface IRefreshBody {
@@ -14,40 +15,25 @@ export default async function Refresh(req: IncomingMessage, res: ServerResponse)
   try {
     body = await getJsonBody(req) as IRefreshBody
   } catch (error) {
-    res.statusCode = 400
-    res.write('400 bad request')
-    return res.end()
+    return sendError(res, 400, '400 Bad request')
   }
 
   const { refreshToken } = body
   if (!refreshToken) {
-    res.statusCode = 400
-    res.write('400 bad request')
-    return res.end()
+    return sendError(res, 400, '400 Bad request')
   }
 
   const recievedPayload = verifyJWT(refreshToken, process.env.JWT_REFERESH_SECRET as string);
   if (!recievedPayload) {
-    res.statusCode = 400
-    res.write('400 Invalid token')
-    return res.end()
+    return sendError(res, 400, '400 Invalid token')
   }
 
   const user = fetchUserById(recievedPayload.id)
   if (!user || user.refreshToken === null || user.refreshToken !== refreshToken) {
-    res.statusCode = 400
-    res.write('400 Mismatch')
-    return res.end()
+    return sendError(res, 400, '400 Invalid token')
   }
 
-  const now = new Date().getTime()
-  const oneDay = 1000 * 60 * 60 * 24
-  const payload: IJWTPayload = {
-    id: user.id as string,
-    email: user.email as string,
-    iat: new Date().getTime(),
-    exp: now + oneDay,
-  }
+  const payload: IJWTPayload = getPayload({id: user.id as string, email: user.email as string})
   const token = createJWT(payload, process.env.JWT_SECRET as string)
 
   res.writeHead(200, { 'Content-Type': 'application/json' })

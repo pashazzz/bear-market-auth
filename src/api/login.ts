@@ -1,8 +1,9 @@
 import { IncomingMessage, ServerResponse } from "node:http"
 
 import { getJsonBody } from '@/utils/reqData'
-import { createJWT } from '@/utils/jwt'
+import { createJWT, getPayload } from '@/utils/jwt'
 import { fetchUserByEmail, sql } from '@/services/db'
+import { sendError } from "@/services/api"
 import { IJWTPayload } from "@/interfaces/IJWTPayload"
 
 interface ILoginBody {
@@ -15,33 +16,22 @@ export default async function Login(req: IncomingMessage, res: ServerResponse) {
   try {
     body = await getJsonBody(req) as ILoginBody
   } catch (error) {
-    res.statusCode = 400
-    res.write('400 bad request')
-    return res.end()
+    return sendError(res, 400, '400 Bad request')
   }
 
   const { email, passHash } = body
   if (!email || !passHash) {
-    res.statusCode = 400
-    res.write('400 bad request')
-    return res.end()
+    return sendError(res, 400, '400 Bad request')
   }
 
   const user = fetchUserByEmail(email)
   if (!user || user.passHash !== passHash) {
-    res.statusCode = 401
-    res.write('401 unauthorized')
-    return res.end()
+    return sendError(res, 401, '401 Unauthorized')
   }
 
   const now = new Date().getTime()
   const oneDay = 1000 * 60 * 60 * 24
-  const payload: IJWTPayload = {
-    id: user.id as string,
-    email: user.email as string,
-    iat: new Date().getTime(),
-    exp: now + oneDay,
-  }
+  const payload: IJWTPayload = getPayload({id: user.id as string, email: user.email as string})
 
   const token = createJWT(payload, process.env.JWT_SECRET as string)
   const refreshToken = createJWT({...payload, exp: now + oneDay * 30}, process.env.JWT_REFERESH_SECRET as string)

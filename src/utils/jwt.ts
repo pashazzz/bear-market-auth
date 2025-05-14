@@ -20,6 +20,15 @@ function getSignature(payload: string, secret: string): string {
     .replace(/\//g, '_')
 }
 
+export function getPayload({id, email}: {id: string, email: string}): IJWTPayload {
+  return {
+    id: id,
+    email: email,
+    iat: new Date().getTime(),
+    exp: new Date().getTime() + 1000 * 60 * 60 * 24,
+  }
+}
+
 export function createJWT(payload: IJWTPayload, secret: string): string {
   const header = {
     alg: 'HS256',
