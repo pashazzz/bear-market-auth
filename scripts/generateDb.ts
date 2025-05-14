@@ -25,6 +25,7 @@ db.exec(`CREATE TABLE users (
   id TEXT PRIMARY KEY NOT NULL,
   email TEXT NOT NULL UNIQUE,
   passHash TEXT NOT NULL,
+  refreshToken TEXT NULL,
   createdAt TEXT NOT NULL,
   updatedAt TEXT NOT NULL
 );`)

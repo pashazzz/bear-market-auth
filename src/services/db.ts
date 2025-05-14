@@ -10,6 +10,10 @@ const dbPath = path.join(__dirname, '..', '..', 'db', 'db.sqlite')
 
 export const db = new DatabaseSync(dbPath)
 
+export const sql = (sql: string) => {
+  return db.prepare(sql).run()
+}
+
 export const fetchUserById = (id: string) => {
   return db.prepare('SELECT * FROM users WHERE id = ?').get(id)
 }

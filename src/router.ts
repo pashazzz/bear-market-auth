@@ -2,8 +2,9 @@ import { IncomingMessage, ServerResponse } from "node:http"
 
 import logger from "@/middlewares/logger"
 
-import login from "@/api/login"
-import create from "@/api/create"
+import Login from "@/api/login"
+import Refresh from "@/api/refresh"
+import Create from "@/api/create"
 
 interface IRouter {
   [key: string]: {
@@ -18,11 +19,15 @@ export default function router(req: IncomingMessage, res: ServerResponse) {
   const routes: IRouter = {
     '/login': {
       method: 'POST',
-      action: login,
+      action: Login,
+    },
+    '/refresh': {
+      method: 'POST',
+      action: Refresh,
     },
     '/create': {
       method: 'POST',
-      action: create,
+      action: Create,
     },
   }
 
