@@ -7,8 +7,8 @@ import { IUser } from '@/interfaces/IUser'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-
-const dbPath = path.join(__dirname, '..', 'db', 'db.sqlite')
+const dbFilename = process.env.NODE_ENV === 'test' ? 'test.sqlite' : 'auth.sqlite'
+const dbPath = path.join(__dirname, '..', 'db', dbFilename)
 
 const db = new DatabaseSync(dbPath)
 
