@@ -10,8 +10,11 @@ dotenv.config()
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const server = createServer({
-  key: readFileSync(path.join(__dirname, '..', 'secrets', 'localhost-privkey.pem')),
-  cert: readFileSync(path.join(__dirname, '..', 'secrets', 'localhost-cert.pem')),
+  key: readFileSync(path.join(__dirname, '..', 'secrets', 'auth-key.pem')),
+  cert: readFileSync(path.join(__dirname, '..', 'secrets', 'auth-cert.pem')),
+  ca: readFileSync(path.join(__dirname, '..', 'secrets', 'ca-cert.pem')),
+  requestCert: true,
+  rejectUnauthorized: true,
 })
 
 server.on('error', (err) => console.error(err));

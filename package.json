@@ -8,12 +8,12 @@
   "type": "module",
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
   "scripts": {
-    "start": "yarn tsx src/app.ts",
-    "dev": "yarn tsx watch src/app.ts",
-    "db:generate": "yarn tsx ./scripts/generateDb.ts",
-    "gen:keypair": "yarn tsx ./scripts/generateKeyPair.ts",
-    "gen:certs": "./scripts/generateCerts.sh",
-    "init": "yarn db:generate && yarn gen:keypair && yarn gen:certs",
+    "build": "tsc -p tsconfig.json",
+    "start": "tsx src/app.js",
+    "dev": "tsx watch src/app.ts",
+    "db:generate": "tsx ./scripts/generateDb.ts",
+    "gen:keypair": "tsx ./scripts/generateKeyPair.ts",
+    "init": "yarn db:generate && yarn gen:keypair",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {

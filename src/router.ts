@@ -1,6 +1,7 @@
 import { IncomingMessage, ServerResponse } from "node:http"
 
 import logger from "@/middlewares/logger"
+import mtlsValidate from "@/middlewares/mtls"
 
 import Login from "@/api/login"
 import Refresh from "@/api/refresh"
@@ -15,6 +16,7 @@ interface IRouter {
 
 export default function router(req: IncomingMessage, res: ServerResponse) {
   logger(req, res, () => {})
+  mtlsValidate(req, res, () => {})
 
   const routes: IRouter = {
     '/login': {
