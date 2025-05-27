@@ -5,8 +5,7 @@ import { DatabaseSync } from 'node:sqlite'
 import { users } from '../db/seeds'
 import { IUser } from '@/interfaces/IUser'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const dbFilename = process.env.NODE_ENV === 'test' ? 'test.sqlite' : 'auth.sqlite'
 const dbPath = path.join(__dirname, '..', 'db', dbFilename)
 

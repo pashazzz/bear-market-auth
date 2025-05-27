@@ -11,7 +11,7 @@
       "@/*": ["./src/*"]
     },
     "allowSyntheticDefaultImports": true,
-    "outDir": "./dist"
+    "outDir": "dist"
   },
   "lib": ["es2023"]
 }
