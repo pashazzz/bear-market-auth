@@ -1,18 +1,16 @@
 import { createServer } from 'node:https'
 import { readFileSync } from 'node:fs'
 import path from 'path'
-import { fileURLToPath } from 'url'
 import dotenv from 'dotenv'
 
 import router from '@/router'
 
 dotenv.config()
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const server = createServer({
-  key: readFileSync(path.join(__dirname, '..', 'secrets', 'auth-key.pem')),
-  cert: readFileSync(path.join(__dirname, '..', 'secrets', 'auth-cert.pem')),
-  ca: readFileSync(path.join(__dirname, '..', 'secrets', 'ca-cert.pem')),
+  key: readFileSync(path.join(process.cwd(), 'secrets', 'auth-key.pem')),
+  cert: readFileSync(path.join(process.cwd(), 'secrets', 'auth-cert.pem')),
+  ca: readFileSync(path.join(process.cwd(), 'secrets', 'ca-cert.pem')),
   requestCert: true,
   rejectUnauthorized: true,
 })
