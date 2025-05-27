@@ -12,8 +12,8 @@ const dbPath = path.join(__dirname, '..', 'db', dbFilename)
 const db = new DatabaseSync(dbPath)
 
 const prepareQuery = (user: IUser) => {
-  const { id, email, passHash, createdAt, updatedAt } = user
-  return `INSERT INTO users (id, email, passHash, createdAt, updatedAt) VALUES ('${id}', '${email}', '${passHash}', '${createdAt}', '${updatedAt}');`
+  const { id, email, salt, passHash, createdAt, updatedAt } = user
+  return `INSERT INTO users (id, email, salt, passHash, createdAt, updatedAt) VALUES ('${id}', '${email}', '${salt}', '${passHash}', '${createdAt}', '${updatedAt}');`
 }
 
 // drop table
@@ -23,6 +23,7 @@ db.exec(`DROP TABLE IF EXISTS users`)
 db.exec(`CREATE TABLE users (
   id TEXT PRIMARY KEY NOT NULL,
   email TEXT NOT NULL UNIQUE,
+  salt TEXT NOT NULL,
   passHash TEXT NOT NULL,
   refreshToken TEXT NULL,
   createdAt TEXT NOT NULL,

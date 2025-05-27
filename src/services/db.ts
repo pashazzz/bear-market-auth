@@ -1,5 +1,6 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
+import * as crypto from 'node:crypto'
 import { DatabaseSync } from 'node:sqlite'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -21,15 +22,17 @@ export const fetchUserByEmail = (email: string) => {
   return db.prepare('SELECT * FROM users WHERE email = ?').get(email)
 }
 
-export const createUser = (email: string, passHash: string) => {
+export const createUser = (email: string, pHash: string) => {
   const id = crypto.randomUUID()
   const createdAt = new Date().toISOString()
   const updatedAt = createdAt
+  const salt = crypto.randomBytes(32).toString('hex')
+  const passHash = crypto.pbkdf2Sync(pHash, salt + createdAt, 100000, 32, 'sha512').toString('hex')
 
   try {
     db.prepare(`INSERT
-      INTO users (id, email, passHash, createdAt, updatedAt)
-      VALUES ('${id}', '${email}', '${passHash}', '${createdAt}', '${updatedAt}')`).run()
+      INTO users (id, email, salt, passHash, createdAt, updatedAt)
+      VALUES ('${id}', '${email}', '${salt}', '${passHash}', '${createdAt}', '${updatedAt}')`).run()
   } catch (error) {
     if ((error as Error).message === 'UNIQUE constraint failed: users.email') {
       return new Error('User already exists', { cause: error })

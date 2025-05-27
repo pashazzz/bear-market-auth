@@ -1,4 +1,5 @@
 import { IncomingMessage, ServerResponse } from "node:http"
+import * as crypto from 'node:crypto'
 
 import { getJsonBody } from '@/utils/reqData'
 import { createJWT, getPayload } from '@/utils/jwt'
@@ -8,10 +9,11 @@ import { IJWTPayload } from "@/interfaces/IJWTPayload"
 
 interface ILoginBody {
   email: string
-  passHash: string
+  pHash: string
 }
 
 export default async function Login(req: IncomingMessage, res: ServerResponse) {
+  // checks
   let body: ILoginBody
   try {
     body = await getJsonBody(req) as ILoginBody
@@ -20,16 +22,23 @@ export default async function Login(req: IncomingMessage, res: ServerResponse) {
     return sendError(res, 400, '400 Bad request')
   }
 
-  const { email, passHash } = body
-  if (!email || !passHash) {
+  const { email, pHash } = body
+  if (!email || !pHash) {
+    console.log('!email || !pHash', !email, !pHash)
     return sendError(res, 400, '400 Bad request')
   }
 
   const user = fetchUserByEmail(email)
-  if (!user || user.passHash !== passHash) {
+  if (!user) {
+    return sendError(res, 401, '401 Unauthorized')
+  }
+  const passHash = crypto.pbkdf2Sync(pHash, user.salt as string + user.createdAt as string, 100000, 32, 'sha512').toString('hex')
+
+  if (passHash !== user.passHash as string) {
     return sendError(res, 401, '401 Unauthorized')
   }
 
+  // create tokens
   const oneMonthLater = new Date().getTime() + 1000 * 60 * 60 * 24 * 30
   const payload: IJWTPayload = getPayload({id: user.id as string, email: user.email as string})
 

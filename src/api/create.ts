@@ -8,10 +8,11 @@ import { IJWTPayload } from "@/interfaces/IJWTPayload"
 
 interface ICreateBody {
   email: string
-  passHash: string
+  pHash: string
 }
 
 export default async function create(req: IncomingMessage, res: ServerResponse) {
+  // checks
   let body: ICreateBody
   try {
     body = await getJsonBody(req) as ICreateBody
@@ -20,14 +21,15 @@ export default async function create(req: IncomingMessage, res: ServerResponse) 
     return sendError(res, 400, '400 Bad request')
   }
 
-  const { email, passHash } = body
-  if (!email || !passHash) {
+  const { email, pHash } = body
+  if (!email || !pHash) {
     return sendError(res, 400, '400 Bad request')
   }
   
+  // try to create user
   let result: { id: string, email: string } | Error
   try {
-    result = createUser(email, passHash)
+    result = createUser(email, pHash)
   } catch (err) {
     console.error(err)
     return sendError(res, 500, '500 Internal server error')
@@ -36,9 +38,10 @@ export default async function create(req: IncomingMessage, res: ServerResponse) 
     if (result instanceof Error && result.message === 'User already exists') {
       return sendError(res, 409, '409 User already exists')
     }
-    return sendError(res, 500, '500 Internal server error')
+    return sendError(res, 500, result.message)
   }
 
+  // create tokens
   const oneMonthLater = new Date().getTime() + 1000 * 60 * 60 * 24 * 30
   const payload: IJWTPayload = getPayload({id: result.id, email: result.email})
 

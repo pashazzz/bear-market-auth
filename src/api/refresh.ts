@@ -11,6 +11,7 @@ interface IRefreshBody {
 }
 
 export default async function Refresh(req: IncomingMessage, res: ServerResponse) {
+  // checks
   let body: IRefreshBody
   try {
     body = await getJsonBody(req) as IRefreshBody
@@ -21,19 +22,23 @@ export default async function Refresh(req: IncomingMessage, res: ServerResponse)
 
   const { refreshToken } = body
   if (!refreshToken) {
+    console.error('!refreshToken', !refreshToken)
     return sendError(res, 400, '400 Bad request')
   }
 
   const recievedPayload = verifyJWT(refreshToken, process.env.JWT_REFERESH_SECRET as string);
   if (!recievedPayload) {
+    console.error('!recievedPayload', !recievedPayload)
     return sendError(res, 400, '400 Invalid token')
   }
 
   const user = fetchUserById(recievedPayload.id)
   if (!user || user.refreshToken === null || user.refreshToken !== refreshToken) {
+    console.error('!user || user.refreshToken === null || user.refreshToken !== refreshToken', user)
     return sendError(res, 400, '400 Invalid token')
   }
 
+  // create tokens
   const payload: IJWTPayload = getPayload({id: user.id as string, email: user.email as string})
   const token = createJWT(payload, process.env.JWT_SECRET as string)
 
