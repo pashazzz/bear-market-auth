@@ -2,7 +2,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { DatabaseSync } from 'node:sqlite'
 
-import { users } from '../db/seeds'
+import { getUsers } from '../db/seeds'
 import { IUser } from '@/interfaces/IUser'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -31,8 +31,8 @@ db.exec(`CREATE TABLE users (
 );`)
 
 // seed
-users.forEach(user => {
-  db.exec(prepareQuery(user))
+getUsers().forEach(user => {
+  db.exec(prepareQuery({...user, passHash: user!.passHash as string}))
 })
 
 db.close()
