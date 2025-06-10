@@ -6,6 +6,7 @@ import mtlsValidate from "@/middlewares/mtls"
 import Login from "@/api/login"
 import Refresh from "@/api/refresh"
 import Create from "@/api/create"
+import List from "@/api/list"
 
 interface IRouter {
   [key: string]: {
@@ -30,6 +31,10 @@ export default function router(req: IncomingMessage, res: ServerResponse) {
     '/create': {
       method: 'POST',
       action: Create,
+    },
+    '/list': {
+      method: 'POST',
+      action: List,
     },
   }
 

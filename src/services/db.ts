@@ -14,6 +14,19 @@ export const sql = (sql: string) => {
   return db.prepare(sql).run()
 }
 
+interface IFetchUsers {
+  search?: string
+  limit?: number
+  offset?: number
+}
+export const fetchUsers = ({search, limit, offset}: IFetchUsers) => {
+  let conds = ''
+  conds += search ? `WHERE email LIKE '%${search}%'` : ''
+  conds += limit ? `LIMIT ${limit}` : ''
+  conds += offset ? `OFFSET ${offset}` : ''
+  return db.prepare(`SELECT * FROM users ${conds}`).all()
+}
+
 export const fetchUserById = (id: string) => {
   return db.prepare('SELECT * FROM users WHERE id = ?').get(id)
 }
