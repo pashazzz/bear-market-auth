@@ -13,11 +13,15 @@ interface ICreateBody {
 
 export default async function create(req: IncomingMessage, res: ServerResponse) {
   // checks
-  let body: ICreateBody
+  let body: ICreateBody | null
   try {
-    body = await getJsonBody(req) as ICreateBody
+    body = await getJsonBody(req) as ICreateBody | null
   } catch (err) {
     console.error(err)
+    return sendError(res, 400, '400 Bad request')
+  }
+  
+  if (!body) {
     return sendError(res, 400, '400 Bad request')
   }
 

@@ -12,11 +12,14 @@ interface IRefreshBody {
 
 export default async function Refresh(req: IncomingMessage, res: ServerResponse) {
   // checks
-  let body: IRefreshBody
+  let body: IRefreshBody | null
   try {
-    body = await getJsonBody(req) as IRefreshBody
+    body = await getJsonBody(req) as IRefreshBody | null
   } catch (err) {
     console.error(err)
+    return sendError(res, 400, '400 Bad request')
+  }
+  if (!body) {
     return sendError(res, 400, '400 Bad request')
   }
 

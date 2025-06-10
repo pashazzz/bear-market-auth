@@ -9,7 +9,7 @@ export const getJsonBody = async (req: IncomingMessage): Promise<any> => {
 
     req.on('end', () => {
       if (!body) {
-        reject(new Error('no body'))
+        resolve(null)
       }
 
       try {

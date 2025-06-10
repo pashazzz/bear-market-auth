@@ -14,11 +14,14 @@ interface ILoginBody {
 
 export default async function Login(req: IncomingMessage, res: ServerResponse) {
   // checks
-  let body: ILoginBody
+  let body: ILoginBody | null
   try {
-    body = await getJsonBody(req) as ILoginBody
+    body = await getJsonBody(req) as ILoginBody | null
   } catch (err) {
     console.error(err)
+    return sendError(res, 400, '400 Bad request')
+  }
+  if (!body) {
     return sendError(res, 400, '400 Bad request')
   }
 
