@@ -3,6 +3,8 @@ import { fileURLToPath } from 'url'
 import * as crypto from 'node:crypto'
 import { DatabaseSync } from 'node:sqlite'
 
+import { IUserDTO, UserDTO } from '@/interfaces/IUser'
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const dbFilename = process.env.NODE_ENV === 'test' ? 'test.sqlite' : 'auth.sqlite'
@@ -14,17 +16,23 @@ export const sql = (sql: string) => {
   return db.prepare(sql)
 }
 
-interface IFetchUsers {
+interface IFetchUsersProps {
   search?: string
   limit?: number
   offset?: number
 }
-export const fetchUsers = ({search, limit, offset}: IFetchUsers) => {
+
+export const fetchUsers = ({search, limit, offset}: IFetchUsersProps): IUserDTO[] => {
   let conds = ''
   conds += search ? `WHERE email LIKE '%${search}%'` : ''
+  if (!limit) {
+    limit = 30
+  }
   conds += limit ? `LIMIT ${limit}` : ''
   conds += offset ? `OFFSET ${offset}` : ''
-  return db.prepare(`SELECT * FROM users ${conds}`).all()
+
+  const fields = Object.keys(UserDTO).map(prop => `users.${prop}`)
+  return db.prepare(`SELECT ${fields.join(', ')} FROM users ${conds}`).all() as unknown as IUserDTO[]
 }
 
 export const fetchUserById = (id: string) => {

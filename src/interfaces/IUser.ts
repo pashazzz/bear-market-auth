@@ -7,3 +7,19 @@ export interface IUser {
   createdAt: string
   updatedAt: string
 }
+
+export interface IUserDTO {
+  id: string
+  email: string
+  refreshToken?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export const UserDTO: IUserDTO = {
+  id: '',
+  email: '',
+  refreshToken: '',
+  createdAt: '',
+  updatedAt: '',
+}
