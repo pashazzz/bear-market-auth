@@ -11,7 +11,7 @@ const dbPath = path.join(__dirname, '..', '..', 'db', dbFilename)
 export const db = new DatabaseSync(dbPath)
 
 export const sql = (sql: string) => {
-  return db.prepare(sql).run()
+  return db.prepare(sql)
 }
 
 interface IFetchUsers {

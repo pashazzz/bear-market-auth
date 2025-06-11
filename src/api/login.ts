@@ -48,7 +48,7 @@ export default async function Login(req: IncomingMessage, res: ServerResponse) {
   const token = createJWT(payload, process.env.JWT_SECRET as string)
   const refreshToken = createJWT({...payload, exp: oneMonthLater}, process.env.JWT_REFERESH_SECRET as string)
 
-  sql(`UPDATE users SET refreshToken = '${refreshToken}' WHERE id = '${user.id}'`)
+  sql(`UPDATE users SET refreshToken = '${refreshToken}' WHERE id = '${user.id}'`).run()
 
   res.writeHead(200, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify({token, refreshToken}))

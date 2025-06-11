@@ -20,7 +20,7 @@ export default async function create(req: IncomingMessage, res: ServerResponse) 
     console.error(err)
     return sendError(res, 400, '400 Bad request')
   }
-  
+
   if (!body) {
     return sendError(res, 400, '400 Bad request')
   }
@@ -52,7 +52,7 @@ export default async function create(req: IncomingMessage, res: ServerResponse) 
   const token = createJWT(payload, process.env.JWT_SECRET as string)
   const refreshToken = createJWT({...payload, exp: oneMonthLater}, process.env.JWT_REFERESH_SECRET as string)
 
-  sql(`UPDATE users SET refreshToken = '${refreshToken}' WHERE id = '${result.id}'`)
+  sql(`UPDATE users SET refreshToken = '${refreshToken}' WHERE id = '${result.id}'`).run()
 
   res.writeHead(200, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify({token, refreshToken}))
